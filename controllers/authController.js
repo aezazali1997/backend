@@ -2,7 +2,8 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
-const appConsts = require('../constants/app.constants')
+require('dotenv').config();
+const SECRETKEY =  process.env.SECRETKEY;
 module.exports = {
     login: async (req, res, next) => {
         const { email, password } = req.body;
@@ -26,7 +27,7 @@ module.exports = {
   }
   const token = jwt.sign(
     { email,name:user.name },
-    appConsts.secretKey,
+    SECRETKEY,
     {expiresIn:"1h"}
     );
   res.send({ 

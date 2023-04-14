@@ -1,5 +1,6 @@
 const Book = require('../models/Book');
 const Shop = require('../models/Shop');
+const {Op}  = require('sequelize');
 
 module.exports = {
   // CREATE - Create a new book
@@ -16,12 +17,22 @@ module.exports = {
   // READ - Get all books
   getAll: async (req, res) => {
     try {
-      const books = await Book.findAll();
-      res.json({ success: true, books });
+      const { shopId} = req.query;
+      let books
+      if(shopId){
+
+         books = await Book.findAll({where:{shopId}});
+         console.log('books found',books)
+      }
+      else{
+        books = await Book.findAll();
+      }
+      res.send( books );
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }
   },
+ 
 
   // READ - Get a book by ID
   getById: async (req, res) => {
@@ -68,4 +79,53 @@ module.exports = {
       res.status(500).json({ success: false, message: error.message });
     }
   },
+  getTopRated:async (req, res, next) => {
+    try {
+      const {shopId} = req.body;
+      const topRatedBooks = await Book.findAll({
+        order: [['rating', 'DESC']],
+        limit: 5,
+        where: {
+          rating: {
+            [Op.not]: null, // Only return books with non-null rating
+          },
+          shopId:shopId
+        },
+      });
+      res.json(topRatedBooks);
+    } catch (err) {
+      next(err);
+    }
+  },
+  getBooksOnSale: async (req, res, next) => {
+    try {
+      const {shopId} = req.body;
+      const booksOnSale = await Book.findAll({
+        where: {
+          sale: true,
+          shopId:shopId
+        },
+      });
+      res.json(booksOnSale);
+    } catch (err) {
+      next(err);
+    }
+  },
+  getBooksByCategory:async (req, res, next) => {
+    try {
+      const categoryId = req.params.categoryId;
+      const category = await Category.findByPk(categoryId);
+      if (!category) {
+        return res.status(404).json({ message: 'Category not found' });
+      }
+      const booksByCategory = await Book.findAll({
+        where: {
+          categoryId,
+        },
+      });
+      res.json(booksByCategory);
+    } catch (err) {
+      next(err);
+    }
+  }
 };

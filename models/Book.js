@@ -27,7 +27,7 @@ genre:{
 
 },
 description:{
-    type:DataTypes.STRING,
+    type:DataTypes.STRING(500),
 },
 coverImage:{
     type:DataTypes.STRING,

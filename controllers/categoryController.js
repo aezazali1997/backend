@@ -26,7 +26,7 @@ module.exports = {
   
     // Get a single category by ID
     getById: (req, res) => {
-      Category.findByPk(req.params.id).then((category) => {
+      Category.findByPk(req.params.categoryId).then((category) => {
         if (category) {
           res.status(200).json(category);
         } else {
@@ -40,7 +40,7 @@ module.exports = {
   
     // Update a category by ID
     updateById: (req, res) => {
-      Category.findByPk(req.params.id).then((category) => {
+      Category.findByPk(req.params.categoryId).then((category) => {
         if (category) {
           category.update({
             name: req.body.name,
@@ -62,7 +62,7 @@ module.exports = {
   
     // Delete a category by ID
     deleteById: (req, res) => {
-      Category.findByPk(req.params.id).then((category) => {
+      Category.findByPk(req.params.categoryId).then((category) => {
         if (category) {
           category.destroy().then(() => {
             res.status(200).json({ message: 'Category deleted successfully' });

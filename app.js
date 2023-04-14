@@ -7,10 +7,12 @@ const userRouter = require('./routes/userRouter')
 const shopRouter = require('./routes/shopRouter')
 const bookRouter = require('./routes/bookRouter');
 const categoryRoutes = require('./routes/categoryRoutes');
+const orderRoutes = require('./routes/orderRouter')
 
 const app = express()
 const Shop = require('./models/Shop')
 const Book= require('./models/Book')
+const Order = require('./models/Order')
 
 app.use(express.json());
 app.use(cors())
@@ -25,14 +27,18 @@ const PORT  = process.env.PORT || 3000;
       sequelize.sync({
         alter:true
       })
-    
+      
     })
+    // Shop.sync({
+    //   force:true
+    // })
     .catch((err)=>console.error('unable to connect to the db',err));
 app.use('/auth',authRouter);
-app.use('/users',userRouter);
+app.use('/user',userRouter);
 app.use('/shop',shopRouter);
 app.use('/book',bookRouter);
 app.use('/category', categoryRoutes);
+app.use('/order',orderRoutes)
 
 app.listen(3000,()=>{
     console.log(`app is listening on port ${PORT}`)
