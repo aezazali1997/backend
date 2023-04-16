@@ -1,0 +1,28 @@
+# How to start the application
+## Just follow the below steps and you will be good to go
+- First Download the pgAdmin from their official website (you can just google it)
+- Download the postgressql utility
+- Install both the above softwares
+- When installing postgresql, it will ask for password. DO save that password as it will be used afterwards.
+- Open the pgadmin4 and you will see left pane section where there is a category of servers
+- Enter the postgres password which you saved in previous step
+- Right click on it -> Register -> server 
+- A dialog box will pop up 
+- Enter the name as 'localServer'
+- Go to 'Connection' tab in the dialog box
+- Enter the 'host name/address' as 'localhost', it needs to be spell checked
+- Passowrd should be the password you saved. Leave the rest as it is
+- you will see a new server inside the servers
+- Right click on new server that you created and go to create -> Database
+- A dialog box will pop up
+- Enter the name 'library'. Do spell Check
+- Go into library -> Schemas -> puiblic -> tables
+- If you are following along and you can see the tables. Then database has been created succesfully
+- Open the terminal in vsCode and type npm start to run the application
+- If you see a consoole message saying 'Connection Established'. Then the tables have been created. you need to Right click on the  tables and hit refresh and go into tables by clicking on the tables
+- Do not close this Terminal
+- For the below steps, you need to have Node install in your system
+- Open another terminal and enter the command 'cd config' and enter command 'node dataImporter.js'
+- If you see only two console messages for shop and categories. then its created succefully and if you see alot of messages. then its an error. something is wrong with tables. Delete the tables in the pgAdmin and re start the server
+-  repeat the above for 'booksImporter.js'
+- Go into each table to see the data
