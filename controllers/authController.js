@@ -43,7 +43,7 @@ module.exports = {
     signup: async (req, res, next) => {
         const { firstName,lastName, email, password } = req.body;
         if (!firstName || !email || !password) {
-            return res.status(403).send('Name,Email and Password must be provided');
+            return res.status(400).send({message:'Name,Email and Password must be provided'});
         }
         const already_user = await User.findOne({
             where: {
@@ -65,7 +65,7 @@ module.exports = {
             password: hashedPassword
         })
         await user.save();
-        return res.status(201).send('User created successfully')
+        return res.status(201).send(user)
 
     }
 }

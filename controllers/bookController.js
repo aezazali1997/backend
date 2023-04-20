@@ -1,16 +1,29 @@
 const Book = require('../models/Book');
 const Shop = require('../models/Shop');
 const {Op}  = require('sequelize');
+const moment  = require('moment');
 
 module.exports = {
   // CREATE - Create a new book
   create: async (req, res) => {
     try {
       const { name, isbn, publisher, publicationDate, price, genre, description, coverImage, availability, rating, user_rating_count, shopId } = req.body;
-      const book = await Book.create({ name, isbn, publisher, publicationDate, price, genre, description, coverImage, availability, rating, user_rating_count, shopId });
-      res.status(201).json({ success: true, book });
+      if(!Array.isArray(genre)){
+        return res.status(400).send({
+          message:"genre must be an Array"
+        })
+      }
+      if(!moment(publicationDate).isValid()){
+        return res.status(400).send({
+          message:"publicationDate must be of type Date"
+        })
+      }
+      
+      const book = await Book.create({ name, isbn, publisher, publicationDate, price, genre, description, coverImage, availability, rating, user_rating_count,sale:false, shopId });
+      res.status(201).json({ book });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      console.log(error.message);
+      res.status(500).json({ message: error.message });
     }
   },
 
@@ -22,14 +35,13 @@ module.exports = {
       if(shopId){
 
          books = await Book.findAll({where:{shopId}});
-         console.log('books found',books)
       }
       else{
         books = await Book.findAll();
       }
       res.send( books );
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      res.status(500).json({ message: error.message });
     }
   },
  
@@ -41,11 +53,11 @@ module.exports = {
       console.log(id)
       const book = await Book.findByPk(id,{include:[Shop]});
       if (!book) {
-        return res.status(404).json({ success: false, message: 'Book not found' });
+        return res.status(404).json({  message: 'Book not found' });
       }
-      res.json({ success: true, book });
+      res.json({ book });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      res.status(500).json({  message: error.message });
     }
   },
 
@@ -56,12 +68,12 @@ module.exports = {
       const { name, isbn, publisher, publicationDate, price, genre, description, coverImage, availability, rating, user_rating_count, shopId } = req.body;
       const book = await Book.findByPk(id);
       if (!book) {
-        return res.status(404).json({ success: false, message: 'Book not found' });
+        return res.status(404).send({  message: 'Book not found' });
       }
       await book.update({ name, isbn, publisher, publicationDate, price, genre, description, coverImage, availability, rating, user_rating_count, shopId });
-      res.json({ success: true, book });
+      res.json({  book });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      res.status(500).json({ message: error.message });
     }
   },
 
@@ -71,12 +83,12 @@ module.exports = {
       const { id } = req.params;
       const book = await Book.findByPk(id);
       if (!book) {
-        return res.status(404).json({ success: false, message: 'Book not found' });
+        return res.status(404).json({ message: 'Book not found' });
       }
       await book.destroy();
-      res.json({ success: true });
+      res.json({ message:"Book deleted succesfully" });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      res.status(500).json({  message: error.message });
     }
   },
   getTopRated:async (req, res, next) => {
@@ -113,7 +125,7 @@ module.exports = {
   },
   getBooksByCategory:async (req, res, next) => {
     try {
-      const categoryId = req.params.categoryId;
+      const categoryId = req.body;
       const category = await Category.findByPk(categoryId);
       if (!category) {
         return res.status(404).json({ message: 'Category not found' });

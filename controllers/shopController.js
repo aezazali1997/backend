@@ -7,6 +7,11 @@ module.exports = {
   // CREATE operation
   create: (req, res) => {
     const { name, description, address } = req.body;
+    if(!name || !description  || !address){
+      res.status(400).send({
+        message:"Name,Description and Address is required"
+      })
+    }
     Shop.create({
       name,
       description,
@@ -37,6 +42,12 @@ module.exports = {
   update: (req, res) => {
     const { id } = req.params;
     const { name, description, address } = req.body;
+    if(!name || !description  || !address){
+      res.status(400).send({
+        message:"Name,Description and Address is required"
+      })
+    }
+    
     Shop.update({
       name,
       description,
